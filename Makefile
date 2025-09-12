@@ -14,6 +14,10 @@ build_main: note/*.tex # gen_listings
 note.pdf: build_main
 	cp note/note.pdf note.pdf
 
+pvc:
+	$(DOCKER) latexmk -pdflatex='pdflatex -shell-escape -interaction=nonstopmode -synctex=1 %O %S;' -pvc -pdf note.tex
+
+
 clean:
 	rm note.pdf || true
 #	rm note/attachments/*.gen || true
