@@ -2,22 +2,12 @@
 % Зачем: Определяет класс документа (То, как будет выглядеть документ)
 % Примечание: параметр draft помечает строки, вышедшие за границы страницы, прямоугольником, в финальной версии его нужно удалить.
 \documentclass[a4paper,14pt,russian,oneside,final]{extreport}
-
-% Зачем: Настройка Times New Roman.
-% Рекомендовано для Windows (нужен PSCyr, подробности см. в fonts_windows.tex)
-% раскомментировать, чтобы использовать:
-\input{fonts_linux}% не забудьте закомментировать \input{fonts_linux}
-
-% Рекомендовано для Linux (нужен scalable-cyrfonts-tex, подробности см. в fonts_linux.tex)
-% раскомментировать, чтобы использовать:
-%\input{fonts_linux}% не забудьте закомментировать \input{fonts_windows}
-
-% Зачем: Установка кодировки исходных файлов.
-\usepackage[utf8]{inputenc}
-
-% Зачем: Делает результирующий PDF "searchable and copyable".
-\usepackage{cmap}
+\usepackage{fontspec}
+\usepackage{unicode-math}
 \usepackage{microtype}
+\setmainfont{Times New Roman}
+
+\setmathfont{TeX Gyre Termes Math}
 
 % Зачем: Учет особенностей различных языков.
 \usepackage[russian]{babel}
@@ -42,20 +32,13 @@
 
 % Зачем: Настраивает отступы от границ страницы.
 % Почему: Пункт 2.1.2 Требований по оформлению пояснительной записки.
-\usepackage[left=3cm,top=2cm,right=1.5cm,bottom=2.7cm]{geometry} % (2) -- стандарт
-
+\usepackage[left=3cm,top=2cm,right=1.5cm,bottom=2.3cm]{geometry}
 
 % Зачем: Настраивает межстрочный интервал, для размещения 40 +/- 3 строки текста на странице.
 % Почему: Пункт 2.1.1 Требований по оформлению пояснительной записки.
 \usepackage[nodisplayskipstretch]{setspace} 
 \setstretch{1.1}
 %\onehalfspacing
-
-% Зачем: Выбор шрифта по-умолчанию. 
-% Почему: Пункт 2.1.1 Требований по оформлению пояснительной записки.
-% Примечание: В требованиях не указан, какой именно шрифт использовать. По традиции используем TNR.
-\renewcommand{\rmdefault}{ftm} % Times New Roman
-
 
 % Зачем: Отключает использование изменяемых межсловных пробелов.
 % Почему: Так не принято делать в текстах на русском языке.
@@ -224,10 +207,10 @@
 
 % Зачем: Задание подписей, разделителя и нумерации частей рисунков
 % Почему: Пункт 2.5.5 Требований по оформлению пояснительной записки.
-\DeclareCaptionLabelFormat{stbfigure}{Рисунок \textit{#2}}
-\DeclareCaptionLabelFormat{stbsubfigure}{\textit{#2}}
-\DeclareCaptionLabelFormat{stbtable}{Таблица \textit{#2}}
-\DeclareCaptionLabelFormat{stlisting}{Листинг \textit{#2}}
+\DeclareCaptionLabelFormat{stbfigure}{Рисунок #2}
+\DeclareCaptionLabelFormat{stbsubfigure}{#2}
+\DeclareCaptionLabelFormat{stbtable}{Таблица #2}
+\DeclareCaptionLabelFormat{stlisting}{Листинг #2}
 \DeclareCaptionLabelSeparator{stb}{~--~}
 \DeclareCaptionLabelSeparator{stbsubfiguresep}{)~}
 \captionsetup{labelsep=stb}
@@ -274,26 +257,6 @@
     \endtabularx
     \vspace{-3mm} % костыль, вдруг понадобится после "где"-области убрать пустую строку
     }
-
-
-% Зачем: Удобная вёрстка многострочных формул, масштабирующийся текст в формулах, формулы в рамках и др
-\usepackage{amsmath}
-
-
-% Зачем: Поддержка ажурного и готического шрифтов 
-\usepackage{amsfonts}
-
-
-% Зачем: amsfonts + несколько сотен дополнительных математических символов
-\usepackage{amssymb}
-
-
-% Зачем: Окружения «теорема», «лемма»
-\usepackage{amsthm}
-
-
-% Зачем: Чтобы можно было использовать русские буквы в формулах, но в случае использования предупреждать об этом.
-\usepackage[warn]{mathtext}
 
 
 % Зачем: Производить арифметические операции во время компиляции TeX файла

@@ -1,36 +1,59 @@
-.PHONY : clean
-default: build_main
+# Use .DEFAULT_GOAL for modern Makefiles to set the default target.
+.DEFAULT_GOAL := help
 
-PWD!=pwd
-DOCKER=docker run --rm --user="$$(id -u):$$(id -g)" --net=none -v "$(PWD)/note:/tmp" -w=/tmp neitex\:latex
+# Project sources and output
+SRC_DIR      := note
+MAIN_TEX     := note.tex
+OUTPUT_PDF   := $(patsubst %.tex,%.pdf,$(MAIN_TEX))
 
-#gen_listings: program/main.cpp
-#	for i in `cat program/main.cpp | head -n 1 | sed -e 's/.*|//' -e 's/,/ /g'`; do cat program/main.cpp | awk "/.*begin:$$i/,/.*end:$$i/" | tail -n +2 | head -n -1 > "note/attachments/$$i.gen"; done
-#	cat program/main.cpp | awk '/IGNORE AFTER/{exit}1' | tail -n +2 | sed -e '/.*begin:/d' -e '/.*end:/d' > note/attachments/main.cpp.gen
+DOCKER_IMAGE := neitex:latex
+DOCKER_CMD   := docker run --rm --user="$$(id -u):$$(id -g)" --net=none -v "$(CURDIR)/$(SRC_DIR):/work" -w=/work $(DOCKER_IMAGE)
 
-build_main: note/*.tex # gen_listings
-	$(DOCKER) latexmk -pdflatex='pdflatex -shell-escape -interaction=nonstopmode -synctex=1 %O %S;' -pdf note.tex
+# latexmk command and flags
+LATEXMK_FLAGS := -xelatex -shell-escape -interaction=nonstopmode -synctex=1
+LATEXMK       := $(DOCKER_CMD) latexmk $(LATEXMK_FLAGS)
 
-note.pdf: build_main
-	cp note/note.pdf note.pdf
+TEX_SOURCES   := $(shell find $(SRC_DIR) -type f -name "*.tex")
+BIB_SOURCES   := $(shell find $(SRC_DIR) -type f -name "*.bib")
+STYLE_SOURCES := $(shell find $(SRC_DIR) -type f \( -name "*.cls" -o -name "*.sty" \))
+
+
+# --- Targets ---
+
+# Define targets that don't correspond to file names.
+.PHONY: all build clean pvc help
+
+ALL_SOURCES := $(TEX_SOURCES) $(BIB_SOURCES) $(STYLE_SOURCES)
+
+# The `all` target is a common convention for the main build process.
+all: $(OUTPUT_PDF)
+	@echo "✅ Build complete: $(OUTPUT_PDF) is ready."
+
+$(OUTPUT_PDF): $(SRC_DIR)/$(OUTPUT_PDF)
+	@echo "==> Copying build artifact to project root..."
+	@cp $< $@
+
+$(SRC_DIR)/$(OUTPUT_PDF): $(ALL_SOURCES)
+	@echo "==> Building LaTeX document inside Docker..."
+	@$(LATEXMK) $(MAIN_TEX)
+
+build: $(SRC_DIR)/$(OUTPUT_PDF)
+
+pvc:
+	@echo "==> Starting latexmk in continuous mode (pvc)..."
+	@$(LATEXMK) -pvc $(MAIN_TEX)
 
 clean:
-	rm note.pdf || true
-#	rm note/attachments/*.gen || true
-	$(DOCKER) latexmk -C
+	@echo "==> Cleaning up generated files..."
+	@rm -f $(OUTPUT_PDF)
+	@$(DOCKER_CMD) latexmk -C
 
-# How to use gen_listings:
-# 1. make sure ur program is in program/main.cpp relative to Makefile
-# 2. first line should be a comment that looks something like that:
-#    // defined snippets: |<snippet_1>,<snippet_2>...
-# 3. each snippet must be defined in the comment above and surrounded by these comments:
-#
-#    //begin:<snippet_1>
-#    int main(){
-#      ...
-#    }
-#    //end:<snippet_1>
-#
-# 4. snippets will be generated to note/attachments under names <snippet_name>.gen
-#
-# Make sure to uncomment relative lines in clean and build_main
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all (default)  Build the PDF and copy it to the project root."
+	@echo "  build          Build the PDF inside the '$(SRC_DIR)' directory only."
+	@echo "  pvc            Run latexmk in continuous mode for live updates."
+	@echo "  clean          Remove all generated files (PDF, aux, log, etc.)."
+	@echo "  help           Show this help message."
