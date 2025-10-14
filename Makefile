@@ -43,6 +43,10 @@ pvc:
 	@echo "==> Starting latexmk in continuous mode (pvc)..."
 	@$(LATEXMK) -pvc $(MAIN_TEX)
 
+pvc:
+	$(DOCKER) latexmk -pdflatex='pdflatex -shell-escape -interaction=nonstopmode -synctex=1 %O %S;' -pvc -pdf note.tex
+
+
 clean:
 	@echo "==> Cleaning up generated files..."
 	@rm -f $(OUTPUT_PDF)
