@@ -350,12 +350,21 @@
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
 \definecolor{white}{rgb}{1, 1, 1}
 
+\BeforeBeginEnvironment{lstlisting}{\shorthandoff{"}}
 \lstdefinestyle{stp-lang}{
-  basicstyle=\rmfamily\itshape,
-  keywordstyle=\color{black},
-  stringstyle=\color{black},
-  commentstyle=\color{black},
-  columns=fullflexible
+    showstringspaces=false,
+    keepspaces=true,
+    columns=fullflexible,
+    basicstyle=\rmfamily\slshape,
+    keywordstyle=\slshape,
+    commentstyle=\slshape,
+    stringstyle=\slshape,
+    identifierstyle=\slshape,
+    breaklines=true,
+    breakatwhitespace=true,
+    extendedchars=true,
+    literate={"}{{"}}1,
+    alsoletter={_}
 }
 
 % Зачем: Нумерация листингов в пределах секции
