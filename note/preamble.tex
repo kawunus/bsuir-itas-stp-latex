@@ -112,8 +112,6 @@
 
 
 
-% Зачем: Задает стиль заголовков раздела жирным шрифтом, прописными буквами, без точки в конце
-% Почему: Пункты 2.1.1, 2.2.5, 2.2.6 и ПРИЛОЖЕНИЕ Л Требований по оформлению пояснительной записки.
 \makeatletter
 \renewcommand\section{%
   \clearpage\@startsection {section}{1}%
@@ -121,6 +119,31 @@
     {-1em \@plus -1ex \@minus -.2ex}%
     {1em \@plus .2ex}%
     {\raggedright\hyphenpenalty=10000\normalfont\bfseries\MakeUppercase}}
+\makeatother
+
+% Зачем: Задает стиль заголовков раздела жирным шрифтом, прописными буквами, без точки в конце
+% Почему: Пункты 2.1.1, 2.2.5, 2.2.6 и ПРИЛОЖЕНИЕ Л Требований по оформлению пояснительной записки.
+% Секция для курсача
+\makeatletter
+\newcommand\crsection{%
+  \clearpage %
+  \@startsection {section}{1}%
+    {\fivecharsapprox}%
+    {-1em \@plus -1ex \@minus -.2ex}%
+    {1em \@plus .2ex}%
+    {\raggedright\hyphenpenalty=10000\normalfont\bfseries\MakeUppercase}%
+}
+\makeatother
+
+% Секция для лабораторных работ
+\makeatletter
+\newcommand\lbsection{%
+  \@startsection {section}{1}%
+    {\fivecharsapprox}%
+    {-1em \@plus -1ex \@minus -.2ex}%
+    {1em \@plus .2ex}%
+    {\raggedright\hyphenpenalty=10000\normalfont\bfseries\MakeUppercase}%
+}
 \makeatother
 
 
@@ -486,3 +509,28 @@
 \usepackage{pdfpages} % to insert PDFs
 
 \newcommand\tline[2]{$\underset{\text{#1}}{\text{\underline{#2}}}$}
+
+\newcounter{appendixcount}
+
+\newcommand{\addappendix}[2][]{%
+  \clearpage
+  \refstepcounter{appendixcount}%
+  \begin{center}%
+    \bfseries % Делает жирным всё содержимое центра
+    \MakeUppercase{Приложение~\Asbuk{appendixcount}}%
+    \if\relax\detokenize{#1}\relax%
+      % Если типа нет
+      \\%
+    \else%
+      % Если тип есть, он теперь тоже будет жирным
+      \\[0ex](#1)\\%
+    \fi%
+    #2%
+  \end{center}%
+  \addcontentsline{toc}{section}{Приложение~\Asbuk{appendixcount}\if\relax\detokenize{#1}\relax\else\ (#1)\fi\ #2}%
+}
+
+\newcommand{\anonsection}[1]{%
+  \sectioncentered*{#1}%
+  \addcontentsline{toc}{section}{#1}%
+}

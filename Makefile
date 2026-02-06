@@ -6,7 +6,7 @@ SRC_DIR      := note
 MAIN_TEX     := note.tex
 OUTPUT_PDF   := $(patsubst %.tex,%.pdf,$(MAIN_TEX))
 
-DOCKER_IMAGE := neitex:latex
+DOCKER_IMAGE := kawunus:latex
 DOCKER_CMD   := docker run --rm --user="$$(id -u):$$(id -g)" --net=none -v "$(CURDIR)/$(SRC_DIR):/work" -w=/work $(DOCKER_IMAGE)
 
 # latexmk command and flags
